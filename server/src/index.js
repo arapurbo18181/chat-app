@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const authRoutes = require("./routes/auth.route");
+const messageRoutes = require("./routes/message.route");
 const config = require("./config/config");
 const cookieParser = require("cookie-parser");
 const { connectDb } = require("./connection");
@@ -16,6 +17,7 @@ app.use(cookieParser());
 
 // ! Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/message", messageRoutes);
 
 // ! Port Connection
 app.listen(port, () => {
