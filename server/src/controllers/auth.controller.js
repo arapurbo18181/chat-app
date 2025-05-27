@@ -1,3 +1,4 @@
+const cloudinary = require("../lib/cloudinary");
 const { generateToken } = require("../lib/utils");
 const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
@@ -100,8 +101,47 @@ const logout = (req, res) => {
   }
 };
 
+// ! Update Profile
+const updateProfile = async (req, res) => {
+  try {
+    const { profilePic } = req.body;
+    const userId = req.user._id;
+
+    // ! initial check
+    if (!profilePic) {
+      return res.status(400).json({ message: "Profile pic is required" });
+    }
+
+    // ! uploading on cloudinary
+    const uploadRes = await cloudinary.uploader.upload(profilePic);
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        profilePic: uploadRes.secure_url,
+      },
+      { new: true }
+    );
+
+    return res.status(200).json({ updatedUser });
+  } catch (error) {
+    console.log("Error in update profile controller", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const checkAuth = async (req, res) => {
+  try {
+    res.status(200).json(req.user);
+  } catch (error) {
+    console.log("Error in checkAuth controller", error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   signup,
   login,
   logout,
+  updateProfile,
+  checkAuth,
 };
