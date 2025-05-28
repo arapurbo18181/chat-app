@@ -5,12 +5,19 @@ const messageRoutes = require("./routes/message.route");
 const config = require("./config/config");
 const cookieParser = require("cookie-parser");
 const { connectDb } = require("./connection");
+const cors = require("cors");
 
 const app = express();
 const port = config.port;
 const dbUrl = config.db.baseUrl;
 
 // ! Middlewares
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
